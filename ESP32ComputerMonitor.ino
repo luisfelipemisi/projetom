@@ -26,6 +26,16 @@ const char* host = "10.0.0.189";
 const char* streamId   = "....................";
 const char* privateKey = "....................";
 
+typedef struct Data
+{
+  String product = "";
+  String part = "";
+  String value = "";
+};
+
+Data data_array[100];
+int data_array_len = 0;
+
 // 'load_1', 52x52px
 const unsigned char epd_bitmap_load_1 [] PROGMEM = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -79,41 +89,13 @@ const unsigned char epd_bitmap_load_2 [] PROGMEM = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-// '103945', 52x52px
-const unsigned char epd_bitmap_103945 [] PROGMEM = {
-  0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0xfc, 0x00, 0x00, 0x00, 0x00, 0x00, 
-  0x07, 0xfe, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0f, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0e, 0x07, 
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 
-  0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 
-  0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 
-  0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 
-  0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 
-  0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 
-  0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 
-  0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 
-  0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 
-  0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 
-  0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 
-  0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x63, 0x80, 0x00, 0x00, 
-  0x00, 0x00, 0x3c, 0x63, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x7c, 0x63, 0xe0, 0x00, 0x00, 0x00, 0x00, 
-  0x70, 0x60, 0xe0, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x60, 0x70, 0x00, 0x00, 0x00, 0x00, 0xe0, 0xf0, 
-  0x78, 0x00, 0x00, 0x00, 0x01, 0xc3, 0xfc, 0x38, 0x00, 0x00, 0x00, 0x01, 0xc3, 0xfc, 0x38, 0x00, 
-  0x00, 0x00, 0x01, 0xc7, 0xfe, 0x38, 0x00, 0x00, 0x00, 0x01, 0xc7, 0xfe, 0x38, 0x00, 0x00, 0x00, 
-  0x01, 0xc7, 0xfe, 0x38, 0x00, 0x00, 0x00, 0x01, 0xc3, 0xfc, 0x38, 0x00, 0x00, 0x00, 0x01, 0xc3, 
-  0xfc, 0x38, 0x00, 0x00, 0x00, 0x01, 0xc1, 0xf8, 0x38, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x70, 
-  0x00, 0x00, 0x00, 0x00, 0xf0, 0x00, 0xf0, 0x00, 0x00, 0x00, 0x00, 0x78, 0x01, 0xe0, 0x00, 0x00, 
-  0x00, 0x00, 0x3e, 0x07, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x1f, 0xff, 0x80, 0x00, 0x00, 0x00, 0x00, 
-  0x07, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xf8, 0x00, 0x00, 0x00
-};
-
 
 
 // Array of all bitmaps for convenience. (Total bytes used to store images in PROGMEM = 768)
-const int epd_bitmap_allArray_LEN = 3;
-const unsigned char* epd_bitmap_allArray[3] = {
+const int epd_bitmap_allArray_LEN = 2;
+const unsigned char* epd_bitmap_allArray[2] = {
 	epd_bitmap_load_1,
-	epd_bitmap_load_2,
-  epd_bitmap_103945
+	epd_bitmap_load_2
 };
 
 
@@ -132,11 +114,6 @@ void setup()
     // Distância entre linhas: 8 px
     // máximos caracteres por linha: (21) 0 até 20
     // maximo de linhas: (8) 0 até 7
-    oled.clearDisplay(); // clear display
-    oled.setTextSize(1);         // set text size
-    oled.setTextColor(WHITE);    // set text color
-    writeTitle("ola meu nome e luis felipe miranda da silva");
-    
 
     Serial.println();
     Serial.println();
@@ -146,7 +123,7 @@ void setup()
     WiFi.begin(ssid, password);
 
 
-    /* while (WiFi.status() != WL_CONNECTED) {
+     while (WiFi.status() != WL_CONNECTED) {
         oled.clearDisplay(); // clear display
         // We start by connecting to a WiFi network
         oled.drawBitmap(38, 20, epd_bitmap_allArray[0], 52, 52, WHITE);
@@ -157,7 +134,7 @@ void setup()
         oled.clearDisplay(); // clear display
         // We start by connecting to a WiFi network
         oled.drawBitmap(38, 20, epd_bitmap_allArray[1], 52, 52, WHITE);
-        writeText("Connecting to", 0);
+        writeText("Connecting to:", 0);
         writeText(ssid, 1);
         delay(500);
     }
@@ -167,24 +144,27 @@ void setup()
     oled.clearDisplay();
     writeText("WiFi connected", 0);
     writeText("IP address:", 1);
-    writeText(Ip, 2); */
+    writeText(Ip, 2); 
     
-    /* Serial.println("");
+     Serial.println("");
     Serial.println("WiFi connected");
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
 
-    delay(500); */
+    delay(500);
 }
 
-int value = 0;
 WiFiClient client;
 
 void loop()
 {
-    delay(5000);
-    ++value;
+    updateScreen();
+    requestData();
+    
+}
 
+void requestData(){
+  
     Serial.print("connecting to ");
     Serial.println(host);
 
@@ -207,10 +187,18 @@ void loop()
     skipResponseHeaders();
     
     disconnect();
-    wait();
+    
     Serial.println();
     Serial.println("closing connection");
 }
+
+
+void updateScreen(){
+  oled.clearDisplay(); // clear display
+  oled.drawBitmap(38, 20, epd_bitmap_allArray[0], 52, 52, WHITE);
+  oled.display();
+}
+
 
 bool skipResponseHeaders() {
   // HTTP headers end with an empty line
@@ -231,14 +219,35 @@ bool skipResponseHeaders() {
         Serial.println(err.c_str());
     }else{
         JsonObject obj = doc.as<JsonObject>();
+        data_array_len = 0;
         for(int i = 0;  ;i++){
-          String sensor = obj["Children"][0]["Children"][i]["Text"];
-          if (sensor == "null"){
+          String hardware = obj["Children"][0]["Children"][i]["Text"];
+          if (hardware == "null"){
             break;
           }else{
-            Serial.println(sensor);
+            Serial.println(hardware);
+          }
+          for(int j = 0;  ;j++){
+            String sensor = obj["Children"][0]["Children"][i]["Children"][j]["Text"];
+            if(sensor == "null"){
+              break;
+            }else if(sensor == "Temperatures" || sensor == "Load"){
+              for(int k = 0; ; k ++){
+                String part = obj["Children"][0]["Children"][i]["Children"][j]["Children"][k]["Text"];
+                String value = obj["Children"][0]["Children"][i]["Children"][j]["Children"][k]["Value"];
+                if (value == "null" || part == "null"){
+                  break;
+                }else{
+                  data_array[data_array_len].product = hardware;
+                  data_array[data_array_len].part = part;
+                  data_array[data_array_len].value = value;
+                  data_array_len++;
+                }
+              }
+            }
           }
         }
+        showValue(data_array, data_array_len);
     }
   }
 
@@ -251,28 +260,70 @@ void disconnect() {
   client.stop();
 }
 
-// Pause for a 1 minute
-void wait() {
-  Serial.println("Wait 3 seconds");
-  delay(3000);
-}
 
 //linha de 0 - 11
-void writeText(String str,int linha){
-  oled.setCursor(0, linha * 10);       // set position to display
+void writeText1(String str){
+  oled.setTextSize(1);         // set text size
+  oled.setCursor(0, 0);       // set position to display
+  oled.setTextColor(WHITE);    // set text color
+  oled.println(str); // set text
+  oled.display();
+}
+
+void writeText(String str, int linhas){
+  oled.setTextSize(1);         // set text size
+  oled.setCursor(0, 8 * linhas);       // set position to display
+  oled.setTextColor(WHITE);    // set text color
   oled.println(str); // set text
   oled.display();
 }
 
 //linha de 0 - 11
+void writeText2(String str){
+  oled.setTextSize(2);         // set text size
+  oled.setCursor(0, 18);       // set position to display
+  oled.setTextColor(WHITE);    // set text color
+  oled.println(str); // set text
+  oled.display();
+}
+
+void writeTempText(String str){
+  int len = str.length();
+  oled.setTextSize(2);         // set text size
+  oled.setTextColor(WHITE);    // set text color
+  oled.setCursor(0, 42);       // set position to display
+  oled.println(str);            // set text
+  oled.setTextSize(1);         // set text size
+  oled.setCursor(len * 12, 42);       // set position to display
+  oled.println('o');            // set text
+  oled.setTextSize(2);         // set text size
+  oled.setCursor(len * 12 + 12, 42);       // set position to display
+  oled.println('C');            // set text
+  oled.display();
+}
+
+void writeValueText(String str){
+  int len = str.length();
+  oled.setTextSize(2);         // set text size
+  oled.setTextColor(WHITE);    // set text color
+  oled.setCursor(0, 42);       // set position to display
+  oled.println(str);            // set text
+  oled.display();
+}
+
+//linha de 0 - 11
 void writeTitle(String str){
+  oled.setTextSize(1);         // set text size
+  oled.setTextColor(WHITE);    // set text color
   int strLen = str.length();
   float linhas = strLen/21.0;
   int intLinhas = (int)linhas;
   Serial.println(linhas - (float)intLinhas);
   if ((linhas - ((int)linhas)) > 0.0){
-    Serial.println((linhas - ((int)linhas)));
     linhas++;
+  }
+  if(linhas > 2){
+    linhas = 2;
   }
   int linha = 0;
   for( int i = 0; i < linhas * 20; i+=20){
@@ -282,4 +333,33 @@ void writeTitle(String str){
     linha++;
   }
   oled.display();
+}
+
+void showValue(Data *data, int data_len){
+    String product;
+    String part;
+    String value;
+  for(int i =0; i < data_len; i++){
+    product = data[i].product;
+    part = data[i].part;
+    value = data[i].value;
+
+    oled.clearDisplay(); // clear display
+    writeText1(product);
+    int len = part.length();
+    String part_aux = part;
+    if( len > 10){
+      part_aux = part.substring(0, 10);
+    }
+    writeText2(part_aux);
+    int posic = value.indexOf('°');
+    if(posic-1 >= 0 ){
+      String subAux = value.substring(0, posic -1);
+      Serial.println(subAux);
+      writeTempText(subAux);
+    }else{
+      writeValueText(value);
+    }
+    delay(4000);
+  }
 }
