@@ -5,8 +5,7 @@
 #define LED_BUILTIN 10  
 
 // Set these to your desired credentials.
-const char *ssid = "yourAP";
-const char *password = "yourPassword";
+const char *ssid = "ProjetoM_AP";
 
 WiFiServer server(80);
 
@@ -19,7 +18,7 @@ void setup() {
   Serial.println("Configuring access point...");
 
   // You can remove the password parameter if you want the AP to be open.
-  WiFi.softAP(ssid, password);
+  WiFi.softAP(ssid);
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(myIP);
