@@ -29,6 +29,7 @@ const char* PARAM_INPUT_4 = "";
 bool restart = false;
 
 String scan = "";
+String listSSID = "";
 
 AsyncWebServer  server(80);
 
@@ -47,7 +48,9 @@ void setup()
   int numberOfNetworks = WiFi.scanNetworks();
 
   for(int i =0; i<numberOfNetworks; i++){
+
       scan += "<tr><th>"+String(WiFi.SSID(i))+"</th><th>"+String(WiFi.RSSI(i))+"</th></tr>";
+      listSSID += "<option>"+ String(WiFi.SSID(i))+ "</option>";
       Serial.print("Network name: ");
       Serial.println(WiFi.SSID(i));
       Serial.print("Signal strength: ");
@@ -98,11 +101,17 @@ bool configWiFiMode(){
     return false;
   }
 
-  int indexOfTr = index.indexOf("</table>");
-  String pt1 = index.substring(0, indexOfTr);
-  String pt2 = index.substring(indexOfTr);
+  int indexOf = index.indexOf("</table>");
+  String pt1 = index.substring(0, indexOf);
+  String pt2 = index.substring(indexOf);
  
   String HTML = pt1 + scan + pt2;
+  
+  indexOf = HTML.indexOf("</datalist>");
+  pt1 = HTML.substring(0, indexOf);
+  pt2 = HTML.substring(indexOf);
+
+  HTML = pt1 + listSSID + pt2;
 
   // Route to load style.css file
   server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){

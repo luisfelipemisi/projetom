@@ -9,21 +9,21 @@
 </head>
 <body>
   <div class="topnav">
-    <h1>ESP Wi-Fi Manager</h1>
+    <h1>Configurar WiFi</h1>
   </div>
   <div class="content">
     <div class="card-grid">
       <div class="card">
         <form action="/" method="POST">
           <p>
-            <label for="ssid">SSID</label>
-            <input type="text" id ="ssid" name="ssid"><br>
-            <label for="pass">Password</label>
+            <label for="ssid">Rede</label>
+            <input type="text" id ="ssid" name="ssid" list="ssids"><br>
+            <label for="pass">Senha</label>
             <input type="text" id ="pass" name="pass"><br>
             <input type ="submit" value ="Submit">
           </p>
         </form>
-        <form action="/scan" method="POST">
+        <form action="/" method="POST">
           <p>
             <input type ="submit" value ="Scan" name="scan">
           </p>
@@ -34,6 +34,8 @@
             <th>Sinal</th>
           </tr>
         </table>
+        <datalist id="ssids">
+        </datalist>
       </div>
     </div>
   </div>
