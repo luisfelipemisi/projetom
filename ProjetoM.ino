@@ -259,6 +259,23 @@ bool initWiFi(String ssid, String password, int timeOut) {
   logSystem("Device IP: " + ip);
   WiFi.setAutoReconnect(true);
   WiFi.persistent(true);
+  // Configura as funções das páginas
+  String message = "<html>\
+ <meta http-equiv=\'content-type\' content=\'text/html; charset=utf-8\'>\
+ <h1>Central de controle dos LEDs</h1>\
+ <p> Apague e acione os LEDs facilmente.</p>\
+ <p> Basta apertar os botões.</p>\
+ <img src='https://mundoprojetado.com.br/wp-content/uploads/2018/06/Template2-e1528172108632.png'>\
+</html>";
+
+  server.on("/", HTTP_GET, [message](AsyncWebServerRequest *request){
+    request->send(200, "text/html", message);
+  });
+
+  // Inicializa o servidor
+  server.begin();
+  Serial.println("Web Server iniciado");
+
   return true;
 }
 
