@@ -259,18 +259,49 @@ bool initWiFi(String ssid, String password, int timeOut) {
   logSystem("Device IP: " + ip);
   WiFi.setAutoReconnect(true);
   WiFi.persistent(true);
-  // Configura as funções das páginas
-  String message = "<html>\
- <meta http-equiv=\'content-type\' content=\'text/html; charset=utf-8\'>\
- <h1>Central de controle dos LEDs</h1>\
- <p> Apague e acione os LEDs facilmente.</p>\
- <p> Basta apertar os botões.</p>\
- <img src='https://mundoprojetado.com.br/wp-content/uploads/2018/06/Template2-e1528172108632.png'>\
-</html>";
 
-  server.on("/", HTTP_GET, [message](AsyncWebServerRequest *request){
-    request->send(200, "text/html", message);
+// Route to load style.css file
+  server.on("/windows.png", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/windows.png", "text/png");
   });
+
+  server.on("/information.png", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/information.png", "text/png");
+  });
+
+  server.on("/hardware.png", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/hardware.png", "text/png");
+  });
+
+  server.on("/index.css", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/index.css", "text/css");
+  });
+  
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/index.html", "text/html");
+  });
+
+  server.on("/", HTTP_POST, [](AsyncWebServerRequest *request) {
+      int params = request->params();
+      for(int i=0;i<params;i++){
+        AsyncWebParameter* p = request->getParam(i);
+        if(p->isPost()){
+          logSystem(p->name() +": "+ p->value(), "Server.POST");
+        }
+      }
+      request->redirect("/");
+    });
+
+  server.on("/display", HTTP_POST, [](AsyncWebServerRequest *request) {
+      int params = request->params();
+      for(int i=0;i<params;i++){
+        AsyncWebParameter* p = request->getParam(i);
+        if(p->isPost()){
+          logSystem(p->name() +": "+ p->value(), "Server.POST");
+        }
+      }
+      request->redirect("/");
+    });
 
   // Inicializa o servidor
   server.begin();

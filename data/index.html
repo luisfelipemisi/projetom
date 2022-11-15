@@ -18,99 +18,95 @@
   <h1>Dashboard</h1>
   <div class="card">
     <h2 class="title">Mostrar na tela</h2>
-    <div class="fileIntern">
-      <div class="tnz-file-tree">
-      <label class="tnz-file-tree-item year">
-          <input class="tnz-file-tree-cb" type="checkbox">
-          <span class="tnz-file-tree-label"><img class="iconFile" src="windows.png" >desktop</span>
-          <div class="tnz-file-tree-branches p1">
-              <label class="tnz-file-tree-item month">
-              <input class="tnz-file-tree-cb" type="checkbox">
-              <span class="tnz-file-tree-label"><img class="iconFile" src="hardware.png" >NVIDIA GeForce RTX 2060	</span>
-              <div class="tnz-file-tree-branches p1">
-                  <label class="tnz-file-tree-item day">
-                      <input class="tnz-file-tree-cb" type="checkbox">
-                      <span class="tnz-file-tree-label"><img class="iconFile" src="hardware.png" >Temperatures</span>
-                      <div class="tnz-file-tree-branches p1">                          
-                        <label class="tnz-file-tree-item hour">
-                              <input class="tnz-file-tree-cb" type="checkbox" name="CPU_Package">
-                              <span class="tnz-file-tree-label"><img class="iconFile" src="information.png" >CPU Package</span>
-                          </label><br>
+    <div class="p-2">
+      <form action="/display" method="POST">
+        <!– Para processar os dados vamor ter de identificar as camadas, cada uma vai ter um valor, começando pela raiz
+          com zero–>
+          <div class="fileIntern">
+            <div class="tnz-file-tree">
+              <label class="tnz-file-tree-item year">
+                <input class="tnz-file-tree-cb" type="checkbox" name="0_computerName">
+                <span class="tnz-file-tree-label"><img class="iconFile" src="windows.png">desktop</span>
+                <div class="tnz-file-tree-branches p1">
+                  <label class="tnz-file-tree-item month">
+                    <input class="tnz-file-tree-cb" type="checkbox" name = "1_product">
+                    <span class="tnz-file-tree-label"><img class="iconFile" src="hardware.png">NVIDIA GeForce RTX 2060</span>
+                    <div class="tnz-file-tree-branches p1">
+                      <label class="tnz-file-tree-item day">
+                        <input class="tnz-file-tree-cb" type="checkbox" name = "2_sensor">
+                        <span class="tnz-file-tree-label"><img class="iconFile" src="hardware.png">Temperatures</span>
+                        <div class="tnz-file-tree-branches p1">
                           <label class="tnz-file-tree-item hour">
-                            <input class="tnz-file-tree-cb" type="checkbox" name="Temperature_#1">
-                            <span class="tnz-file-tree-label"><img class="iconFile" src="information.png" >Temperature #1</span>
+                            <input class="tnz-file-tree-cb" type="checkbox" name="3_CPU_Package">
+                            <span class="tnz-file-tree-label"><img class="iconFile" src="information.png">CPU Package</span>
                           </label><br>
-                          <label class="tnz-file-tree-item hour">
-                            <input class="tnz-file-tree-cb" type="checkbox" name="Temperature_#2">
-                            <span class="tnz-file-tree-label"><img class="iconFile" src="information.png" >Temperature #2</span>
-                          </label><br>
-                          <label class="tnz-file-tree-item hour">
-                            <input class="tnz-file-tree-cb" type="checkbox" name="Temperature_#3">
-                            <span class="tnz-file-tree-label"><img class="iconFile" src="information.png" >Temperature #3</span>
-                          </label><br>
-                      </div>
+                        </div>
+                      </label>
+                    </div>
                   </label>
-              </div>
-          </label>
+                </div>
+              </label>
+            </div>
+            <input type="submit" name="submit" value="Submit" />
           </div>
-      </label>
+      </form>
+    </div>
   </div>
 
-  </div></div>
-  
-  
+
   <div class="card">
     <h2 class="title">Refresh time</h2>
     <div class="content">
       <form action="/" method="POST">
         <p>
           <label for="refreshTime">time</label>
-          <input type="number" id="refreshTime" name="rTime" value = "3"><br>
+          <input type="number" id="refreshTime" name="rTime" value="3"><br>
           <input type="submit" value="enter">
         </p>
       </form>
     </div>
   </div>
-    
+
   <div class="card">
     <h2 class="title">Computer source IP</h2>
     <div class="content">
       <form action="/" method="POST">
         <p>
           <label for="ip">IP</label>
-          <input type="text" id = "ip" minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" value="10.0.0.189"><br>
+          <input name="ip" type="text" id="ip" minlength="7" maxlength="15" size="15"
+value="10.0.0.189"><br>
           <label for="port">port</label>
-          <input type="text" id = "port" name="port" value="8085"><br>
+          <input type="text" id="port" name="port" value="8085"><br>
           <input type="submit" value="enter">
         </p>
       </form>
     </div>
-  </div>  
-  
-    <div class="card">
-      <h2 class="title">Restart</h2>
-      <div class="content">
-        <form action="/" method="POST">
-          <p>
-            <input type="submit" value="restart" name="restart">
-          </p>
-        </form>
-      </div>
+  </div>
+
+  <div class="card">
+    <h2 class="title">Restart</h2>
+    <div class="content">
+      <form action="/" method="POST">
+        <p>
+          <input type="submit" value="true" name="restart">
+        </p>
+      </form>
     </div>
-    
-    <div class="card">
-      <h2 class="title">Config mode</h2>
-      <div class="content">
-        <h3>isso vai apagar suas configurações de wifi e reiniciar o dispositivo </h3>
-        <form action="/" method="POST">
-          <p>
-            <input type="submit" value="restart" name="restart">
-          </p>
-        </form>
-      </div>
+  </div>
+
+  <div class="card">
+    <h2 class="title">Config mode</h2>
+    <div class="content">
+      <h3>isso vai apagar suas configurações de wifi e reiniciar o dispositivo </h3>
+      <form action="/" method="POST">
+        <p>
+          <input type="submit" value="enter" name="configMode">
+        </p>
+      </form>
     </div>
-    
-    
+  </div>
+
+
 </body>
 
 </html>
