@@ -2,7 +2,7 @@
 #include "FS.h"
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-
+#include <ArduinoJson.h>
 
 bool initWiFi(String ssid, String password, int timeOut = 60000);
 void reconnection(String ssid, String password, int timeOut = 300000);
@@ -26,6 +26,7 @@ String pass_;
 // File paths to save input values permanently
 const char* ssidPath = "/ssid.txt";
 const char* passPath = "/pass.txt";
+const char* displayPath = "/display.json";
 
 // Search for parameter in HTTP POST request
 const char* PARAM_INPUT_1 = "ssid";
@@ -33,6 +34,7 @@ const char* PARAM_INPUT_2 = "pass";
 const char* PARAM_INPUT_3 = "scan";
 const char* PARAM_INPUT_4 = "";
 
+String displayData = "";
 long long int  startTimeToRevifyConnection;
 long long int  mills;
 int time_add_ap_mode_startTimeToRevifyConnection = 300000; // 5 min
@@ -57,6 +59,10 @@ void setup()
   // Load values saved in SPIFFS
   wifi_seting = loadWiFiSettings();
 
+  displayData = readFile(displayPath);
+
+  logSystem("Display: " + displayData,  "setup");
+
   if ( !wifi_seting || !initWiFi(ssid_, pass_)){
     startTimeToRevifyConnection = millis() + time_add_ap_mode_startTimeToRevifyConnection;
     if (!configWiFiMode()){
@@ -71,7 +77,6 @@ void loop() {
  	if(restart){
     ESP.restart();
   }
-
   reconnection(ssid_, pass_);
   
 }
@@ -287,6 +292,9 @@ bool initWiFi(String ssid, String password, int timeOut) {
         AsyncWebParameter* p = request->getParam(i);
         if(p->isPost()){
           logSystem(p->name() +": "+ p->value(), "Server.POST");
+          if(p->name() == "restart" && p->value() == "true"){
+            ESP.restart();
+          }
         }
       }
       request->redirect("/");
@@ -294,18 +302,27 @@ bool initWiFi(String ssid, String password, int timeOut) {
 
   server.on("/display", HTTP_POST, [](AsyncWebServerRequest *request) {
       int params = request->params();
+      DynamicJsonDocument doc(1024);
+      String str_ant = "";
+      doc["nome"] = "display_screen";
       for(int i=0;i<params;i++){
         AsyncWebParameter* p = request->getParam(i);
         if(p->isPost()){
-          logSystem(p->name() +": "+ p->value(), "Server.POST");
+          if(p->value() != "Submit" && p->value() != "0"){
+            doc["id"] [i]  = p->value();
+          }
         }
       }
+       
+      serializeJson(doc, displayData);
+      writeFile(SPIFFS, "/display.json", displayData);
+      logSystem(displayData, "update display data");
       request->redirect("/");
     });
 
   // Inicializa o servidor
   server.begin();
-  Serial.println("Web Server iniciado");
+  logSystem("Web Server iniciado");
 
   return true;
 }
