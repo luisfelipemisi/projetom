@@ -3,6 +3,8 @@
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
 
 bool initWiFi(String ssid, String password, int timeOut = 60000);
 void reconnection(String ssid, String password, int timeOut = 300000);
@@ -34,6 +36,8 @@ const char* PARAM_INPUT_2 = "pass";
 const char* PARAM_INPUT_3 = "scan";
 const char* PARAM_INPUT_4 = "";
 
+const char* host = "10.0.0.189";
+
 String displayData = "";
 long long int  startTimeToRevifyConnection;
 long long int  mills;
@@ -46,6 +50,7 @@ String scan = "";
 String listSSID = "";
 
 AsyncWebServer  server(80);
+WiFiClient client;
 
 void setup()
 {
@@ -71,6 +76,8 @@ void setup()
   }else{
     startTimeToRevifyConnection = millis();
   }
+
+ 
 }
 
 void loop() {
@@ -78,7 +85,9 @@ void loop() {
     ESP.restart();
   }
   reconnection(ssid_, pass_);
-  
+  requestData();
+  delay(1000);
+
 }
 
 bool loadWiFiSettings(){
@@ -397,3 +406,75 @@ void writeFile(fs::FS &fs, const char *  path, String  message){
   }
 }
 
+void requestData(){
+  
+    Serial.print("connecting to ");
+    Serial.println(host);
+
+    // Use WiFiClient class to create TCP connections
+    
+    const int httpPort = 8085;
+    if (!client.connect(host, httpPort)) {
+        Serial.println("connection failed");
+        return;
+    }
+
+    // We now create a URI for the request
+    String url = "/data.json";
+
+    Serial.print("Requesting URL: ");
+    Serial.println(url);
+
+    // This will send the request to the server
+    client.print(String("GET ") + url + " HTTP/1.1\r\n" + "Host: " + host + "\r\n" + "Connection: close\r\n\r\n");
+    skipResponseHeaders();
+    
+    disconnect();
+    
+    Serial.println();
+    Serial.println("closing connection");
+}
+
+bool skipResponseHeaders() {
+  // HTTP headers end with an empty line
+  char endOfHeaders[] = "\r\n\r\n";
+
+  client.setTimeout(1000);
+  bool ok = client.find(endOfHeaders);
+
+  if (!ok) {
+    Serial.println("No response or invalid response!");
+  }else{
+    Serial.println("OK");
+    DynamicJsonDocument doc(18384);
+    DeserializationError  err = deserializeJson(doc, client ,DeserializationOption::NestingLimit(20));
+    if (err) {
+        Serial.print(F("deserializeJson() failed: "));
+        Serial.println(err.c_str());
+    }else{
+        String output;
+        JsonObject obj = doc.as<JsonObject>();
+        showJSON(obj);
+    }
+  }
+  return ok;
+}
+
+// Close the connection with the HTTP server
+void disconnect() {
+  Serial.println("Disconnect");
+  client.stop();
+}
+
+
+void showJSON(JsonObject obj){
+  for(int i = 0;  ;i++){
+    String text = obj["Children"][i]["Text"];
+    if (text == "null"){
+      return;
+    }else{
+      logSystem(text, "json");
+      showJSON(obj["Children"][i]);
+    }
+  }
+}
