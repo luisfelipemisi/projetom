@@ -348,8 +348,11 @@ bool initWiFi(String ssid, String password, int timeOut) {
       for(int i=0;i<params;i++){
         AsyncWebParameter* p = request->getParam(i);
         if(p->isPost()){
-          if(p->value() != "Submit" && p->value() != "0"){
+          if(p->value() != "Submit" && p->value() != "Refresh" && p->value() != "0"){
             doc["id"] [i]  = p->value();
+          }else if (p->value() == "Refresh"){
+            request->redirect("/");
+            restart = true;
           }
         }
       }
