@@ -353,6 +353,7 @@ bool initWiFi(String ssid, String password, int timeOut) {
           }else if (p->value() == "Refresh"){
             request->redirect("/");
             restart = true;
+            return;
           }
         }
       }
