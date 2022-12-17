@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Projeto M</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" type="text/css" href="index.css">
+  <script src="tree.js"></script>
+  <style>
+    body {
+      background-image: linear-gradient(#462f7f, #d900e9);
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Dashboard</h1>
+  <div class="card">
+    <h2 class="title">Refresh time</h2>
+    <div class="content">
+      <form action="/" method="POST">
+        <p>
+          <label for="refreshTime">time</label>
+          <input type="number" id="refreshTime" name="rTime" value="3"><br>
+          <input type="submit" value="enter">
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="title">Computer source IP</h2>
+    <div class="content">
+      <form action="/" method="POST">
+        <p>
+          <label for="ip">IP</label>
+          <input name="ip" type="text" id="ip" minlength="7" maxlength="15" size="15"
+value="10.0.0.189"><br>
+          <label for="port">port</label>
+          <input type="text" id="port" name="port" value="8085"><br>
+          <input type="submit" value="enter">
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="title">Restart</h2>
+    <div class="content">
+      <form action="/" method="POST">
+        <p>
+          <input type="submit" value="true" name="restart">
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="title">Config mode</h2>
+    <div class="content">
+      <h3>isso vai apagar suas configurações de wifi e reiniciar o dispositivo </h3>
+      <form action="/" method="POST">
+        <p>
+          <input type="submit" value="enter" name="configMode">
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="title">Mostrar na tela</h2>
+    <div class="p-2">
+      <form action="/display" method="POST">
+        <div class="fileIntern">
+              <img class="iconFile" src="w.png">computer
+              <div class=" p1"><img class="iconFile" src="hw.png">/Sensor/NOTE/ASUS TUF GAMING B550M-PLUS/Nuvoton NCT6798D/Voltages<div class="p1"><input type="checkbox" value="5">CPU VCore<br><input type="checkbox" value="6">Voltage #2<br><input type="checkbox" value="7">AVCC<br><input type="checkbox" value="8">3VCC<br><input type="checkbox" value="9">Voltage #5<br><input type="checkbox" value="10">Voltage #6<br><input type="checkbox" value="11">Voltage #7<br><input type="checkbox" value="12">3VSB<br><input type="checkbox" value="13">VBAT<br><input type="checkbox" value="14">VTT<br><input type="checkbox" value="15">Voltage #11<br><input type="checkbox" value="16">Voltage #12<br><input type="checkbox" value="17">Voltage #13<br><input type="checkbox" value="18">Voltage #14<br><input type="checkbox" value="19">Voltage #15<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/ASUS TUF GAMING B550M-PLUS/Nuvoton NCT6798D/Temperatures<div class="p1"><input type="checkbox" value="21">Temperature #1<br><input type="checkbox" value="22">Temperature #2<br><input type="checkbox" value="23">Temperature #3<br><input type="checkbox" value="24">Temperature #4<br><input type="checkbox" value="25">Temperature #5<br><input type="checkbox" value="26">Temperature #6<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/ASUS TUF GAMING B550M-PLUS/Nuvoton NCT6798D/Fans<div class="p1"><input type="checkbox" value="28">Fan #2<br><input type="checkbox" value="29">Fan #7<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/ASUS TUF GAMING B550M-PLUS/Nuvoton NCT6798D/Controls<div class="p1"><input type="checkbox" value="31">Fan Control #1<br><input type="checkbox" value="32">Fan Control #2<br><input type="checkbox" value="33">Fan Control #3<br><input type="checkbox" value="34">Fan Control #4<br><input type="checkbox" value="35">Fan Control #5<br><input type="checkbox" value="36">Fan Control #6<br><input type="checkbox" value="37">Fan Control #7<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/AMD Ryzen 5 5500/Clocks<div class="p1"><input type="checkbox" value="40">Bus Speed<br><input type="checkbox" value="41">CPU Core #1<br><input type="checkbox" value="42">CPU Core #2<br><input type="checkbox" value="43">CPU Core #3<br><input type="checkbox" value="44">CPU Core #4<br><input type="checkbox" value="45">CPU Core #5<br><input type="checkbox" value="46">CPU Core #6<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/AMD Ryzen 5 5500/Temperatures<div class="p1"><input type="checkbox" value="48">CPU Package<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/AMD Ryzen 5 5500/Load<div class="p1"><input type="checkbox" value="50">CPU Total<br><input type="checkbox" value="51">CPU Core #1<br><input type="checkbox" value="52">CPU Core #2<br><input type="checkbox" value="53">CPU Core #3<br><input type="checkbox" value="54">CPU Core #4<br><input type="checkbox" value="55">CPU Core #5<br><input type="checkbox" value="56">CPU Core #6<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/AMD Ryzen 5 5500/Powers<div class="p1"><input type="checkbox" value="58">CPU Package<br><input type="checkbox" value="59">CPU Cores<br><input type="checkbox" value="60">CPU Core #1<br><input type="checkbox" value="61">CPU Core #2<br><input type="checkbox" value="62">CPU Core #3<br><input type="checkbox" value="63">CPU Core #4<br><input type="checkbox" value="64">CPU Core #5<br><input type="checkbox" value="65">CPU Core #6<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/Generic Memory/Load<div class="p1"><input type="checkbox" value="68">Memory<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/Generic Memory/Data<div class="p1"><input type="checkbox" value="70">Used Memory<br><input type="checkbox" value="71">Available Memory<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/NVIDIA NVIDIA GeForce RTX 2060/Clocks<div class="p1"><input type="checkbox" value="74">GPU Core<br><input type="checkbox" value="75">GPU Memory<br><input type="checkbox" value="76">GPU Shader<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/NVIDIA NVIDIA GeForce RTX 2060/Temperatures<div class="p1"><input type="checkbox" value="78">GPU Core<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/NVIDIA NVIDIA GeForce RTX 2060/Load<div class="p1"><input type="checkbox" value="80">GPU Core<br><input type="checkbox" value="81">GPU Frame Buffer<br><input type="checkbox" value="82">GPU Video Engine<br><input type="checkbox" value="83">GPU Bus Interface<br><input type="checkbox" value="84">GPU Memory<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/NVIDIA NVIDIA GeForce RTX 2060/Fans<div class="p1"><input type="checkbox" value="86">GPU<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/NVIDIA NVIDIA GeForce RTX 2060/Controls<div class="p1"><input type="checkbox" value="88">GPU Fan<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/NVIDIA NVIDIA GeForce RTX 2060/Powers<div class="p1"><input type="checkbox" value="90">GPU Power<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/NVIDIA NVIDIA GeForce RTX 2060/Data<div class="p1"><input type="checkbox" value="92">GPU Memory Free<br><input type="checkbox" value="93">GPU Memory Used<br><input type="checkbox" value="94">GPU Memory Total<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/NVIDIA NVIDIA GeForce RTX 2060/Throughput<div class="p1"><input type="checkbox" value="96">GPU PCIE Rx<br><input type="checkbox" value="97">GPU PCIE Tx<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/WDC WD5000LPVX-80V0TT0/Temperatures<div class="p1"><input type="checkbox" value="100">Temperature<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/WDC WD5000LPVX-80V0TT0/Load<div class="p1"><input type="checkbox" value="102">Used Space<br></div><img class="iconFile" src="hw.png">/Sensor/NOTE/Generic Hard Disk/Load<div class="p1"><input type="checkbox" value="105">Used Space<br><input type="checkbox" value="108">Used Space<br></div><!--here--></div>
+          <input type="submit" name="submit" value="Submit">
+        </div>
+    </form>
+    </div>
+  </div>
+
+
+</body>
+
+</html>

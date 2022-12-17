@@ -5,6 +5,7 @@
 #include <ArduinoJson.h>
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
+#include <string.h>
 
 bool initWiFi(String ssid, String password, int timeOut = 60000);
 void reconnection(String ssid, String password, int timeOut = 300000);
@@ -15,6 +16,16 @@ const char *password = "987654321";
 IPAddress local_IP(192,168,4,22);
 IPAddress gateway(192,168,4,9);
 IPAddress subnet(255,255,255,0);
+
+String dad[200];
+String son[200];
+int son_id[200];
+int sonID_x_dad[200];
+
+int son_index = 0;
+int dad_index = 1;
+
+String checkBox = "";
 
 bool ap_mode = true;
 bool wifi_seting = false;
@@ -39,7 +50,13 @@ const char* PARAM_INPUT_4 = "";
 const char* host = "10.0.0.189";
 
 String displayData = "";
+String file_three_html = "";
+String file_three_leaf_init_1 = "<input type=\"checkbox\" value=\"";
+String file_three_leaf_init_2 = "\">";
+String file_three_leaf_end = "<br>";
 long long int  startTimeToRevifyConnection;
+long long int time_to_request;
+long long int interval_request_rewrite = 60000;
 long long int  mills;
 int time_add_ap_mode_startTimeToRevifyConnection = 300000; // 5 min
 unsigned long intervalTimeToVerifyConnection = 60000; // 1 min
@@ -48,6 +65,8 @@ bool restart = false;
 
 String scan = "";
 String listSSID = "";
+
+
 
 AsyncWebServer  server(80);
 WiFiClient client;
@@ -76,8 +95,9 @@ void setup()
   }else{
     startTimeToRevifyConnection = millis();
   }
+  time_to_request =  0;
 
- 
+  
 }
 
 void loop() {
@@ -85,9 +105,10 @@ void loop() {
     ESP.restart();
   }
   reconnection(ssid_, pass_);
-  requestData();
-  delay(1000);
-
+  if(millis() - time_to_request > interval_request_rewrite){
+    time_to_request = millis();
+    //requestData();
+  }
 }
 
 bool loadWiFiSettings(){
@@ -196,7 +217,6 @@ bool configWiFiMode(){
     request->send(200, "text/html", HTML);
   });
 
-
   server.on("/", HTTP_POST, [](AsyncWebServerRequest *request) {
       int params = request->params();
       for(int i=0;i<params;i++){
@@ -240,7 +260,7 @@ String readFile(String path){
 
   File file = SPIFFS.open(path, "r");
   if(!file){
-    logSystem("- failed to open file for reading");
+    logSystem("- failed to open file for reading "+ path );
     return "";
   }
   
@@ -273,26 +293,37 @@ bool initWiFi(String ssid, String password, int timeOut) {
   logSystem("Device IP: " + ip);
   WiFi.setAutoReconnect(true);
   WiFi.persistent(true);
+  requestData();
+  String index_ = readFile("/index_origin.html");
+  if(index_ == ""){
+    logSystem("index_origin dont find",  "error");
+  }
+  int indexOf_ = index_.indexOf("<!--here-->");
+  String pt1_ = index_.substring(0, indexOf_);
+  String pt2_ = index_.substring(indexOf_);
+  String HTML_ = pt1_ + mountCheckBox() + pt2_;
+  writeFile(SPIFFS, "/index.html", HTML_);
 
-// Route to load style.css file
-  server.on("/windows.png", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/windows.png", "text/png");
+  // Route to load style.css file
+  server.on("/w.png", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/w.png", "text/png");
   });
 
-  server.on("/information.png", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/information.png", "text/png");
+  server.on("/i.png", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/i.png", "text/png");
   });
 
-  server.on("/hardware.png", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/hardware.png", "text/png");
+  server.on("/hw.png", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/hw.png", "text/png");
   });
 
   server.on("/index.css", HTTP_GET, [](AsyncWebServerRequest *request){
+
     request->send(SPIFFS, "/index.css", "text/css");
   });
   
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/index.html", "text/html");
+      request->send(SPIFFS, "/index.html", "text/html");
   });
 
   server.on("/", HTTP_POST, [](AsyncWebServerRequest *request) {
@@ -322,7 +353,7 @@ bool initWiFi(String ssid, String password, int timeOut) {
           }
         }
       }
-       
+      displayData = "";
       serializeJson(doc, displayData);
       writeFile(SPIFFS, "/display.json", displayData);
       logSystem(displayData, "update display data");
@@ -454,7 +485,11 @@ bool skipResponseHeaders() {
     }else{
         String output;
         JsonObject obj = doc.as<JsonObject>();
-        showJSON(obj);
+        file_three_html = "";
+        //file_three_html = file_three_root_init;
+        mountFileThree(obj, "");
+        //file_three_html += file_three_root_end;
+        //logSystem(mountCheckBox());
     }
   }
   return ok;
@@ -477,4 +512,97 @@ void showJSON(JsonObject obj){
       showJSON(obj["Children"][i]);
     }
   }
+}
+
+void mountFileThree(JsonObject obj, String pai){
+  for(int i = 0;  ;i++){
+    String text = obj["Children"][i]["Text"];
+    String min = obj["Min"];
+    String max = obj["Max"];
+    String value = obj["Value"];
+    if (text == "null" ){
+      if ( min != "Min" && min != "" && max != "Max" && max != "" && value != "Value" && value != "" ){
+        int dad_i = findDadId(pai);
+        if(dad_i < 0 ){
+          dad_index = addDad(pai, dad_index);
+          dad_i = dad_index - 1;
+        }
+        son_index = addSon(String(obj["Text"]), obj["id"], son_index);
+        sonID_x_dad[(int)obj["id"]] = dad_i;
+      }
+      return;
+    }else{
+      mountFileThree(obj["Children"][i], String(pai) + "/"  + String(obj["Text"]));
+    }
+  }
+}
+
+int findDadId( String dad_aux){
+  for(int i = 0; i< 200 ; i ++){
+    if( dad_aux == dad[i]){
+        return i;
+    }
+  }
+  return -1;
+}
+
+int addDad( String dad_STR, int index){
+  dad[index] = dad_STR;
+  return index +1;
+}
+
+int addSon(String son_name_STR, int son_id_INT, int index){
+  son[index] = son_name_STR;
+  son_id[index] = son_id_INT;
+  return index +1;
+}
+
+int findSon( int son_id_aux){
+  for(int i = 0; i< 200 ; i ++){
+    if( son_id_aux == son_id[i]){
+        return i;
+    }
+  }
+  return -1;
+}
+
+void printDadSon(){
+  for(int i = 0; i < 200; i++){
+    if(dad[i] != ""){
+      logSystem(dad[i], "dad");
+      //procurar todos os seus filhos
+      for(int j = 0; j < 200; j ++){
+      //sonID_x_dad tem gravado o id do pai, e o index do sonID_x_dad é o id do sensor
+        if(sonID_x_dad[j] == i){
+          //j é o id do sensor;
+          int posicao_do_nome_do_sensor = findSon(j);
+          logSystem(son[posicao_do_nome_do_sensor], "son");
+        }
+      }
+    }
+  }
+}
+
+
+String mountCheckBox(){
+  String checkBox = "";
+  bool empt = true;
+  for(int i = 0; i < 200; i++){
+    if(dad[i] != ""){
+      //logSystem(dad[i], "dad");
+      checkBox += "<img class=\"iconFile\" src=\"hw.png\">" + dad[i] + "<div class=\"p1\">";
+      //procurar todos os seus filhos
+      for(int j = 0; j < 200; j ++){
+      //sonID_x_dad tem gravado o id do pai, e o index do sonID_x_dad é o id do sensor
+        if(sonID_x_dad[j] == i){
+          //j é o id do sensor;
+          int posicao_do_nome_do_sensor = findSon(j);
+          //logSystem(son[posicao_do_nome_do_sensor], "son");
+          checkBox += "<input type=\"checkbox\" name=\"item\" value=\""+ String(j) +"\">"+son[posicao_do_nome_do_sensor]+"<br>";
+        }
+      }
+      checkBox += "</div>";
+    }
+  }
+  return checkBox;
 }
